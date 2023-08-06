@@ -1,23 +1,28 @@
+#include <WiFiManager.h> 
+#include <WiFi.h>
 #include <WiFi.h>
 #include <Firebase_ESP_Client.h>
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
 #include "EmonLib.h" //Include Emon Library
 
-#define WIFI_SSID "Your SSID"
-#define WIFI_PASSWORD "Password"
-#define API_KEY "API key"
+#define API_KEY "API Key"
 #define DATABASE_URL "Database URL"
 #define VOLT_CAL 106.8 //We have to Calibrate this
 #define MAX_DATA_POINTS 5 // Number of data points to store
 
+// select which pin will trigger the configuration portal when set to LOW
+#define TRIGGER_PIN 15
+
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
+WiFiManager wifiManager;
 
 EnergyMonitor emon1;
 EnergyMonitor emon2;
 
+const int sensorIn = 36;
 double Voltage = 0;
 double VRMS = 0;
 float Voltage_RMS_arr[MAX_DATA_POINTS];
@@ -29,25 +34,110 @@ bool signupOK=false;
 
 
 
-void setup(){
+const char custom_html[] PROGMEM = R"html(
+    <!DOCTYPE html>
+<html>
+<head>
+    <title>IntelliSwitcher Setup</title>
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>IntelliSwitcher Configuration</h1>
+    <!-- You can add more custom content here if needed -->
+</body>
+</html>
+
+)html";
+
+
+int timeout = 120; // seconds to run for
+
+void connectToWiFi() {
+  Serial.println("Connecting to Wi-Fi...");
+  WiFi.begin(); // Start Wi-Fi connection
+  unsigned long startAttemptTime = millis();
+
+  // Wait until connected or timed out
+  while (WiFi.status() != WL_CONNECTED && (millis() - startAttemptTime) < 10000) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nConnected to Wi-Fi!");
+    config.api_key = API_KEY;
+    config.database_url = DATABASE_URL;
+    // Sign up
+    if (Firebase.signUp(&config, &auth, "", "")) {
+      Serial.println("SignUp OK");
+      signupOK = true;
+    } else {
+      Serial.printf("%s\n", config.signer.signupError.message.c_str());
+    }
+
+    // Assign the callback function for the long running token generation task
+    config.token_status_callback = tokenStatusCallback; //see addons/TokenHelper.h
+
+    Firebase.begin(&config, &auth);
+    Firebase.reconnectWiFi(true);
+  } else {
+    Serial.println("\nFailed to connect to Wi-Fi!");
+  }
+}
+
+void eraseWiFiCredentials() {
+  WiFiManager wifiManager;
+  wifiManager.resetSettings();
+  Serial.println("Wi-Fi credentials erased.");
+}
+
+void setup() {
+  WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP  
+  // put your setup code here, to run once:
   Serial.begin(115200);
   emon1.voltage(35, VOLT_CAL, 1.7);
   emon2.current(34,0.52);
-  WiFi.begin(WIFI_SSID,WIFI_PASSWORD);
-  Serial.print("Connecting to Wi-Fi");
-  while(WiFi.status() !=WL_CONNECTED){
-    Serial.print(".");
-    delay(300);
-  }
-  Serial.println();
-  Serial.print("Connected with IP: ");
-  Serial.println(WiFi.localIP());
-  Serial.println();
+  Serial.println("\n Starting");
+  pinMode(TRIGGER_PIN, INPUT_PULLUP);
+}
 
-  config.api_key = API_KEY;
-  config.database_url = DATABASE_URL;
+void loop() {
+  // is configuration portal requested?
+  if ( digitalRead(TRIGGER_PIN) == LOW) {
+    WiFiManager wm; 
+    wm.setCustomHeadElement(custom_html); 
+    eraseWiFiCredentials();
+    delay(2000);
 
-  /* Sign up */
+
+    //reset settings - for testing
+    //wm.resetSettings();
+  
+    // set configportal timeout
+    wm.setConfigPortalTimeout(timeout);
+
+    if (!wm.startConfigPortal("IntelliSwitcher","Intel123")) {
+      Serial.println("failed to connect and hit timeout");
+      delay(3000);
+      //reset and try again, or maybe put it to deep sleep
+      ESP.restart();
+      delay(5000);
+    }
+
+    //if you get here you have connected to the WiFi
+    Serial.println("connected...yeey :)");
+    config.api_key = API_KEY;
+    config.database_url = DATABASE_URL;
+    /* Sign up */
   if (Firebase.signUp(&config, &auth, "", "")){
     Serial.println("SignUp OK");
     signupOK = true;
@@ -61,26 +151,30 @@ void setup(){
   
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
-}
 
-void loop() {
-  // Calculation Part
-  // Volatge RMS
-  emon1.calcVI(20, 2000);
-  float Voltage_RMS = emon1.Vrms;
-  // Current RMS
-  double Irms = emon2.calcIrms(1480);
-  // Store values in arrays
-  Voltage_RMS_arr[dataIndex] = Voltage_RMS;
-  AmpsRMS_arr[dataIndex] = Irms;
-  dataIndex++;
+  }
 
-  // Check if we have reached the maximum number of data points
-  if (dataIndex >= MAX_DATA_POINTS) {
-    // If yes, reset the index and send the arrays to the database
-    dataIndex = 0;
+   if (WiFi.isConnected()){
+     // Calculation Part
+    // Volatge RMS
+    emon1.calcVI(20, 2000);
+    float Voltage_RMS = emon1.Vrms;
+    // Current RMS
+    double Irms = emon2.calcIrms(1480);
+    //print the Values in serial 
+    Serial.println( Voltage_RMS);
+    Serial.println( Irms);
 
-    if (Firebase.ready() && signupOK) {
+    // Store values in arrays
+    Voltage_RMS_arr[dataIndex] = Voltage_RMS;
+    AmpsRMS_arr[dataIndex] = Irms;
+    dataIndex++;
+
+    // Check if we have reached the maximum number of data points
+    if (dataIndex >= MAX_DATA_POINTS) {
+      // If yes, reset the index and send the arrays to the database
+      dataIndex = 0;
+      if (Firebase.ready() && signupOK) {
       for (int i = 0; i < MAX_DATA_POINTS; i++) {
         // Create unique data paths for each value using the index
         String voltagePath = "Sensor/Volatge/" + String(i);
@@ -107,10 +201,9 @@ void loop() {
         delay(100);
       }
     }
-  }
-
-  // Delay to wait for next iteration
-  delay(1000); // You can adjust this delay based on your requirements
+   }
+   }
+   else {
+    connectToWiFi();
+   }
 }
-
-
