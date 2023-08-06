@@ -16,11 +16,10 @@ FirebaseAuth auth;
 FirebaseConfig config;
 
 EnergyMonitor emon1;
-const int sensorIn = 36;
-int mVperAmp = 66; // use 100 for 20A Module and 66 for 30A Module
+EnergyMonitor emon2;
+
 double Voltage = 0;
 double VRMS = 0;
-double AmpsRMS = 0;
 float Voltage_RMS_arr[MAX_DATA_POINTS];
 float AmpsRMS_arr[MAX_DATA_POINTS];
 int dataIndex = 0;
@@ -28,34 +27,12 @@ int dataIndex = 0;
 unsigned long sendDataPrevMillis=0;
 bool signupOK=false;
 
-float getVPP(){
-  float result;
-  int readValue; //value read from the sensor
-  int maxValue = 0; // store max value here
-  int minValue = 1024; // store min value here
-
-  uint32_t start_time = millis();
-  while((millis()-start_time) < 3000){ //sample for 3 Sec
-    readValue = analogRead(sensorIn);
-    // see if you have a new maxValue
-    if (readValue > maxValue){
-      /*record the maximum sensor value*/
-      maxValue = readValue;
-    }
-    if (readValue < minValue){
-      /*record the minimum sensor value*/
-      minValue = readValue;
-    }
-  }
-  // Subtract min from max
-  result = ((maxValue-minValue) * 5.0)/1024.0;
-  return result;
-}
 
 
 void setup(){
   Serial.begin(115200);
   emon1.voltage(35, VOLT_CAL, 1.7);
+  emon2.current(34,30);
   WiFi.begin(WIFI_SSID,WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
   while(WiFi.status() !=WL_CONNECTED){
@@ -92,13 +69,10 @@ void loop() {
   emon1.calcVI(20, 2000);
   float Voltage_RMS = emon1.Vrms;
   // Current RMS
-  Voltage = getVPP();
-  VRMS = (Voltage / 2.0) * 0.707; // root 2 is 0.707
-  AmpsRMS = (VRMS * 1000) / mVperAmp;
-
+  float Irms = emon2.calcIrms(1480);
   // Store values in arrays
   Voltage_RMS_arr[dataIndex] = Voltage_RMS;
-  AmpsRMS_arr[dataIndex] = AmpsRMS;
+  AmpsRMS_arr[dataIndex] = Irms;
   dataIndex++;
 
   // Check if we have reached the maximum number of data points
