@@ -4,11 +4,11 @@
 #include "addons/RTDBHelper.h"
 #include "EmonLib.h" //Include Emon Library
 
-#define WIFI_SSID "Add your SSID"
-#define WIFI_PASSWORD "ADD you password"
-#define API_KEY "API KEY"
-#define DATABASE_URL "DATABASE URL"
-#define VOLT_CAL 258.7 //We have to Calibrate this
+#define WIFI_SSID "Your SSID"
+#define WIFI_PASSWORD "Password"
+#define API_KEY "API key"
+#define DATABASE_URL "Database URL"
+#define VOLT_CAL 106.8 //We have to Calibrate this
 #define MAX_DATA_POINTS 5 // Number of data points to store
 
 FirebaseData fbdo;
@@ -32,7 +32,7 @@ bool signupOK=false;
 void setup(){
   Serial.begin(115200);
   emon1.voltage(35, VOLT_CAL, 1.7);
-  emon2.current(34,30);
+  emon2.current(34,0.52);
   WiFi.begin(WIFI_SSID,WIFI_PASSWORD);
   Serial.print("Connecting to Wi-Fi");
   while(WiFi.status() !=WL_CONNECTED){
@@ -69,7 +69,7 @@ void loop() {
   emon1.calcVI(20, 2000);
   float Voltage_RMS = emon1.Vrms;
   // Current RMS
-  float Irms = emon2.calcIrms(1480);
+  double Irms = emon2.calcIrms(1480);
   // Store values in arrays
   Voltage_RMS_arr[dataIndex] = Voltage_RMS;
   AmpsRMS_arr[dataIndex] = Irms;
