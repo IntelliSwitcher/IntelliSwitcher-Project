@@ -5,24 +5,26 @@
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
 #include "EmonLib.h" //Include Emon Library
+#include <ZMPT101B.h>
 
 #define API_KEY "API Key"
 #define DATABASE_URL "Database URL"
-#define VOLT_CAL 106.8 //We have to Calibrate this
+#define SENSITIVITY 500.0f
 #define MAX_DATA_POINTS 5 // Number of data points to store
+#define LED_PIN 22
 
 // select which pin will trigger the configuration portal when set to LOW
 #define TRIGGER_PIN 15
+ZMPT101B voltageSensor(35, 50.0);
 
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
 WiFiManager wifiManager;
 
-EnergyMonitor emon1;
+
 EnergyMonitor emon2;
 
-const int sensorIn = 36;
 double Voltage = 0;
 double VRMS = 0;
 float Voltage_RMS_arr[MAX_DATA_POINTS];
@@ -104,10 +106,12 @@ void setup() {
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP  
   // put your setup code here, to run once:
   Serial.begin(115200);
-  emon1.voltage(35, VOLT_CAL, 1.7);
-  emon2.current(34,0.52);
+  voltageSensor.setSensitivity(SENSITIVITY);
+  emon2.current(34,0.9);
   Serial.println("\n Starting");
   pinMode(TRIGGER_PIN, INPUT_PULLUP);
+  pinMode(LED_PIN, OUTPUT); // Set LED pin as OUTPUT
+  digitalWrite(LED_PIN, LOW); // Initialize LED as OFF
 }
 
 void loop() {
@@ -155,10 +159,11 @@ void loop() {
   }
 
    if (WiFi.isConnected()){
+     digitalWrite(LED_PIN, HIGH);
      // Calculation Part
     // Volatge RMS
-    emon1.calcVI(20, 2000);
-    float Voltage_RMS = emon1.Vrms;
+    float Voltage_RMS = voltageSensor.getRmsVoltage();
+    delay(1000);
     // Current RMS
     double Irms = emon2.calcIrms(1480);
     //print the Values in serial 
@@ -205,5 +210,6 @@ void loop() {
    }
    else {
     connectToWiFi();
+    digitalWrite(LED_PIN, LOW);
    }
 }
