@@ -2,5 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="">#</color>>
+    <color name='gray' rgb='3C4359' r='59' g='67' b='89' />
+    <color name='d_blue' rgb='1F438C' r='30' g='67' b='140' />
+    <color name='blue' rgb='558ED9' r='84' g='141' b='216' />
+    <color name='l_blue' rgb='CEECF2' r='205' g='235' b='242' />
+    <color name='yellow' rgb='F2E63D' r='242' g='230' b='60' />
 </resources>
