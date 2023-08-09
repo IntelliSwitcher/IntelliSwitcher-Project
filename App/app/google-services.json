@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "222127048372",
+    "firebase_url": "https://intelliswitcherdb-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "intelliswitcherdb",
+    "storage_bucket": "intelliswitcherdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222127048372:android:f9a235e06d42a63026b9e1",
+        "android_client_info": {
+          "package_name": "com.thirdapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "222127048372-a00vhap5br8rpjti8auodevibbr0hdc2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDWYDtLJQTqtwkmn4U8uLBte5htxuCVH0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "222127048372-a00vhap5br8rpjti8auodevibbr0hdc2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

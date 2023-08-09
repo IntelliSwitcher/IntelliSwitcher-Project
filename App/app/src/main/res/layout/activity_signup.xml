@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/theme_image_1"
+    tools:context=".SignupActivity">
+
+    <!-- Google Icon -->
+    <ImageView
+        android:id="@+id/googleIcon"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:src="@drawable/google"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/signupWithGoogleButton"
+        android:layout_marginBottom="15dp"
+        />
+
+    <!-- Firebase Icon -->
+    <ImageView
+        android:id="@+id/firebaseIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/firebase"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/signupWithGoogleButton"
+        android:layout_marginBottom="16dp"
+        android:layout_toLeftOf="@id/googleIcon"
+        android:layout_marginRight="15dp"
+        />
+
+
+
+    <!-- MyApp Icon -->
+    <ImageView
+        android:id="@+id/myAppIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/applogo"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/signupWithGoogleButton"
+        android:layout_marginBottom="16dp"
+        android:layout_toRightOf="@id/googleIcon"
+        android:layout_marginLeft="16dp"/>
+
+    <!-- Sign Up with Google Button -->
+    <Button
+        android:id="@+id/signupWithGoogleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="310dp"
+        android:backgroundTint="#800080"
+        android:text="Sign Up with Google" />
+
+    <!-- "Getting Started..." Text -->
+    <TextView
+        android:id="@+id/gettingStartedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/googleIcon"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="107dp"
+        android:layout_marginTop="283dp"
+        android:layout_marginBottom="50dp"
+        android:text="Getting Started..."
+        android:textColor="#FFFFFF"
+        android:textSize="24sp" />
+
+
+</RelativeLayout>
+
+
+
