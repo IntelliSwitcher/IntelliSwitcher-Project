@@ -6,13 +6,15 @@
 #include "EmonLib.h" // Include Emon Library
 #include <ZMPT101B.h>
 #include <EEPROM.h>
+#include <math.h>
+
 
 
 #define EEPROM_USER_EMAIL_ADDR 0
 #define EEPROM_USER_PASSWORD_ADDR 100
 #define EEPROM_SIZE 200
-#define API_KEY "AIzaSyDDWYDtLJQTqtwkmn4U8uLBte5htxuCVH0"
-#define DATABASE_URL "https://intelliswitcherdb-default-rtdb.asia-southeast1.firebasedatabase.app/"
+#define API_KEY "ADD YOUR API KEY"
+#define DATABASE_URL "ADD YOUR DATABASE URL"
 #define SENSITIVITY 500.0f
 #define MAX_DATA_POINTS 5 // Number of data points to store
 #define LED_PIN 22
@@ -40,6 +42,7 @@ double Voltage = 0;
 double VRMS = 0;
 float Voltage_RMS_arr[MAX_DATA_POINTS];
 float AmpsRMS_arr[MAX_DATA_POINTS];
+float Phase_Diff[MAX_DATA_POINTS];
 int dataIndex = 0;
 
 unsigned long sendDataPrevMillis = 0;
@@ -192,6 +195,8 @@ void loop() {
     memset(USER_EMAIL, 0, sizeof(USER_EMAIL));
     memset(USER_PASSWORD, 0, sizeof(USER_PASSWORD));
     saveConfigFile(); // Save empty credentials to EEPROM
+    digitalWrite(LED_PIN, LOW);
+
     delay(2000);
 
 
@@ -232,13 +237,19 @@ void loop() {
     
     float Voltage_RMS = voltageSensor.getRmsVoltage();
     double Irms = emon2.calcIrms(1480);
+    double phaseDifference = atan2(Voltage_RMS, Irms);
+    // Convert phase angle to degrees
+    double phaseDegrees = phaseDifference * (180.0 / M_PI);
     delay(1000);
     
     Serial.println(Voltage_RMS);
     Serial.println(Irms);
+    Serial.println(phaseDegrees);
+
 
     Voltage_RMS_arr[dataIndex] = Voltage_RMS;
     AmpsRMS_arr[dataIndex] = Irms;
+    Phase_Diff[dataIndex] = phaseDegrees;
     dataIndex++;
 
     if (dataIndex >= MAX_DATA_POINTS) {
@@ -247,6 +258,8 @@ void loop() {
         for (int i = 0; i < MAX_DATA_POINTS; i++) {
           String voltagePath = "Sensor/Voltage/" + String(i) ;
           String ampPath = "Sensor/Amp/" + String(i) ;
+          String phasePath = "Sensor/Phase/" + String(i) ;
+
 
           if (Firebase.RTDB.setFloat(&fbdo, voltagePath.c_str(), Voltage_RMS_arr[i])) {
             Serial.println(Voltage_RMS_arr[i]);
@@ -263,6 +276,13 @@ void loop() {
           } else {
             Serial.println("FAILED: " + fbdo.errorReason());
           }
+          if (Firebase.RTDB.setFloat(&fbdo, phasePath.c_str(), Phase_Diff[i])) {
+            Serial.println(Phase_Diff[i]);
+            Serial.print("-successfully saved to: " + phasePath);
+            Serial.println(" (" + fbdo.dataType() + ")");
+          } else {
+            Serial.println("FAILED: " + fbdo.errorReason());
+          }
 
           delay(100);
         }
@@ -271,7 +291,7 @@ void loop() {
 
     delay(1000); // Delay before taking the next reading
   } else {
-    connectToWiFi();
     digitalWrite(LED_PIN, LOW);
+    connectToWiFi();
   }
 }
