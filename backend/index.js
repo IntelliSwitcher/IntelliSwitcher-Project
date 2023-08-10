@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 const firebase = require('firebase');
 const firebaseConfig = {
   apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
+  authDomain: 'YOUR_AUTH_DOMAIN'
   databaseURL: 'YOUR_DATABASE_URL',
   projectId: 'YOUR_PROJECT_ID',
   storageBucket: 'YOUR_STORAGE_BUCKET',
@@ -19,6 +19,8 @@ const firebaseConfig = {
   appId: 'YOUR_APP_ID'
 };
 firebase.initializeApp(firebaseConfig);
+
+
 const database = firebase.database();
 
 // Routes
