@@ -10,12 +10,19 @@ app.use(bodyParser.json());
 const serviceAccount = require('./serviceAccountKey.json'); // Adjust the path
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: 'YOUR_DATABASE_URL'
+  databaseURL: 'https://console.firebase.google.com/project/intelliswitcherdb/database/intelliswitcherdb-default-rtdb/data/~2F'
 });
 
 // Require and use your routes
 const dashboardRoute = require('./routes/dashboard');
+const signupRoute = require("./routes/signup");
+const loginRoute = require("./routes/login");
+
+
+// use the routes
 app.use('/dashboard', dashboardRoute);
+app.use('/signup',signupRoute);
+app.use('/login',loginRoute);
 
 // Start the server
 const PORT = process.env.PORT || 3011;
