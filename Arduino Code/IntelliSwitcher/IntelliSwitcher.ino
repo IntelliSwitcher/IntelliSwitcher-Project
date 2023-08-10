@@ -5,20 +5,20 @@
 #include "addons/RTDBHelper.h"
 #include "EmonLib.h" // Include Emon Library
 #include <ZMPT101B.h>
-#include <FS.h>
-#include <SPIFFS.h>
-#include <ArduinoJson.h>
+#include <EEPROM.h>
 
-// JSON configuration file
-#define JSON_CONFIG_FILE "/test_config.json"
-#define API_KEY "AIzaSyBo-kDXxopJeh3--2ALR-2oiHAFTf4bpf8"
-#define DATABASE_URL "https://new00-baeda-default-rtdb.asia-southeast1.firebasedatabase.app/"
+
+#define EEPROM_USER_EMAIL_ADDR 0
+#define EEPROM_USER_PASSWORD_ADDR 100
+#define EEPROM_SIZE 200
+#define API_KEY "AIzaSyDDWYDtLJQTqtwkmn4U8uLBte5htxuCVH0"
+#define DATABASE_URL "https://intelliswitcherdb-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define SENSITIVITY 500.0f
 #define MAX_DATA_POINTS 5 // Number of data points to store
 #define LED_PIN 22
 
-char USER_EMAIL[100] = "test01@gmail.com"; // Change to your email address
-char USER_PASSWORD[100] = "123456@";       // Change to your desired password
+char USER_EMAIL[100] = ""; // Change to your email address
+char USER_PASSWORD[100] = "";       // Change to your desired password
 
 // Flag for saving data
 bool shouldSaveConfig = false;
@@ -73,59 +73,47 @@ int timeout = 120; // seconds to run for
 
 void saveConfigFile() {
   Serial.println(F("Saving configuration..."));
-  
-  // Create a JSON document
-  StaticJsonDocument<512> json;
-  json["USER_EMAIL"] = USER_EMAIL;
-  json["USER_PASSWORD"] = USER_PASSWORD;
- 
-  // Open config file
-  File configFile = SPIFFS.open(JSON_CONFIG_FILE, "w");
-  if (!configFile) {
-    // Error, file did not open
-    Serial.println("failed to open config file for writing");
-    return;
+
+  EEPROM.begin(EEPROM_SIZE);
+
+  // Write USER_EMAIL to EEPROM
+  for (int i = 0; i < sizeof(USER_EMAIL); i++) {
+    EEPROM.write(EEPROM_USER_EMAIL_ADDR + i, USER_EMAIL[i]);
   }
- 
-  // Serialize JSON data to write to file
-  serializeJsonPretty(json, Serial);
-  if (serializeJson(json, configFile) == 0) {
-    // Error writing file
-    Serial.println(F("Failed to write to file"));
+
+  // Write USER_PASSWORD to EEPROM
+  for (int i = 0; i < sizeof(USER_PASSWORD); i++) {
+    EEPROM.write(EEPROM_USER_PASSWORD_ADDR + i, USER_PASSWORD[i]);
   }
-  // Close file
-  configFile.close();
+
+  EEPROM.commit();
+  EEPROM.end();
 }
 
+
 bool loadConfigFile() {
-  // ...
-  // Read configuration from FS json
-  if (SPIFFS.begin(false) || SPIFFS.begin(true)) {
-    // ...
-    if (SPIFFS.exists(JSON_CONFIG_FILE)) {
-      File configFile = SPIFFS.open(JSON_CONFIG_FILE, "r"); // Open the config file
-      if (configFile) {
-        StaticJsonDocument<512> json;
-        DeserializationError error = deserializeJson(json, configFile);
-        configFile.close(); // Close the config file after reading
-        // ...
-        if (error) {
-          Serial.print(F("Failed to read config file: "));
-          Serial.println(error.c_str());
-        } else {
-          if (json.containsKey("USER_EMAIL") && json.containsKey("USER_PASSWORD")) {
-            strcpy(USER_EMAIL, json["USER_EMAIL"]);
-            strcpy(USER_PASSWORD, json["USER_PASSWORD"]);
-            return true;  // Return true to indicate success
-          }
-        }
-        // ...
-      }
-    }
+  EEPROM.begin(EEPROM_SIZE);
+
+  // Read USER_EMAIL from EEPROM
+  for (int i = 0; i < sizeof(USER_EMAIL); i++) {
+    USER_EMAIL[i] = EEPROM.read(EEPROM_USER_EMAIL_ADDR + i);
   }
-  // ...
-  return false;  // Return false if loading fails
+  USER_EMAIL[sizeof(USER_EMAIL) - 1] = '\0';
+
+  // Read USER_PASSWORD from EEPROM
+  for (int i = 0; i < sizeof(USER_PASSWORD); i++) {
+    USER_PASSWORD[i] = EEPROM.read(EEPROM_USER_PASSWORD_ADDR + i);
+  }
+  USER_PASSWORD[sizeof(USER_PASSWORD) - 1] = '\0';
+
+  EEPROM.end();
+
+  if (strlen(USER_EMAIL) > 0 && strlen(USER_PASSWORD) > 0) {
+    return true; // Return true to indicate success
+  }
+  return false;   // Return false if loading fails
 }
+
 
 
 
@@ -198,7 +186,12 @@ void loop() {
     WiFiManagerParameter Password_text("password_text", "Enter Your Password", USER_PASSWORD, 100);
     wm.addParameter(&Email_text);
     wm.addParameter(&Password_text);
+    wm.setCustomHeadElement(custom_html); // Set custom HTML template
     eraseWiFiCredentials();
+    // Reset the stored USER_EMAIL and USER_PASSWORD
+    memset(USER_EMAIL, 0, sizeof(USER_EMAIL));
+    memset(USER_PASSWORD, 0, sizeof(USER_PASSWORD));
+    saveConfigFile(); // Save empty credentials to EEPROM
     delay(2000);
 
 
@@ -228,18 +221,8 @@ void loop() {
     Serial.println(USER_EMAIL);
     Serial.print("Updated USER_PASSWORD: ");
     Serial.println(USER_PASSWORD);
-    config.api_key = API_KEY;
-    auth.user.email = USER_EMAIL;
-    auth.user.password = USER_PASSWORD;
-    config.database_url = DATABASE_URL;
-    
-    Firebase.reconnectWiFi(true);
-    Firebase.begin(&config, &auth);
-    uid = auth.token.uid.c_str();
-    Serial.print("User UID: ");
-    Serial.println(uid);
-    signupOK = true;
-    Serial.println("Sign ok");
+    saveConfigFile();
+    ESP.restart();
   }
 
 
