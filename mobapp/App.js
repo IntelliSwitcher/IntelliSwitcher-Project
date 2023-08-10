@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import HomeScreen from "./screens/HomeScreen";
-import Header from "./components/CompHeader";
+import StartupScreen from "./screens/StartupScreen";
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -17,10 +17,13 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          screenOptions={{ headerShown: false }}
+          initialRouteName="startup"
+        >
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="startup" component={StartupScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
