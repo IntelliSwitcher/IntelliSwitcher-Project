@@ -1,28 +1,29 @@
+//////////////////////////// index.js 
+                          // main js file contains all the routes
+
 const express = require('express');
 const app = express();
-const firebaseAdmin = require('firebase-admin');
 const bodyParser = require('body-parser');
+const firebase = require('./routes/firebase'); 
+const verifyTokenMiddleware = require('./routes/verifyTokenMiddleware');
 
 // Middleware
 app.use(bodyParser.json());
 
-// Initialize Firebase Admin SDK
-const serviceAccount = require('./serviceAccountKey.json'); // Adjust the path
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: 'https://console.firebase.google.com/project/intelliswitcherdb/database/intelliswitcherdb-default-rtdb/data/~2F'
-});
+// Use the Firebase Admin app instance in your routes
+const dashboardHelloRoute = require('./routes/dashboardHello');
+const signupRoute = require('./routes/signup');
+const loginRoute = require('./routes/login');
+const basicInfoRoute = require('./routes/basicInfo');
+// const predictRoute = require('./routes/predict');
 
-// Require and use your routes
-const dashboardRoute = require('./routes/dashboard');
-const signupRoute = require("./routes/signup");
-const loginRoute = require("./routes/login");
+// Use the routes
+app.use('/dashboardHello', verifyTokenMiddleware, dashboardHelloRoute);
+app.use('/signup', signupRoute);
+app.use('/login', loginRoute);
+app.use('/basicInfo', basicInfoRoute);
+// app.use('predict',predictRoute);
 
-
-// use the routes
-app.use('/dashboard', dashboardRoute);
-app.use('/signup',signupRoute);
-app.use('/login',loginRoute);
 
 // Start the server
 const PORT = process.env.PORT || 3011;
