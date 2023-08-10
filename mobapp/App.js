@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,22 +8,11 @@ import Header from "./components/CompHeader";
 
 const App = () => {
   const Stack = createNativeStackNavigator();
-  const fontLoading = async () => {
-    try {
-      const [fontsLoaded] = await useFonts({
-        "Raleway-Light": require("./assets/fonts/Raleway-Light.ttf"),
-        "Raleway-Regular": require("./assets/fonts/Raleway-Regular.ttf"),
-        "Raleway-SemiBold": require("./assets/fonts/Raleway-SemiBold.ttf"),
-        "Raleway-Bold": require("./assets/fonts/Raleway-Bold.ttf"),
-      });
-      return fontsLoaded;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fontLoading();
+  const [fontsLoaded] = useFonts({
+    "Raleway-Light": require("./assets/fonts/Raleway-Light.ttf"),
+    "Raleway-Regular": require("./assets/fonts/Raleway-Regular.ttf"),
+    "Raleway-SemiBold": require("./assets/fonts/Raleway-SemiBold.ttf"),
+    "Raleway-Bold": require("./assets/fonts/Raleway-Bold.ttf"),
   });
 
   return (
