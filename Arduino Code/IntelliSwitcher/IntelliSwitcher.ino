@@ -13,8 +13,8 @@
 #define EEPROM_USER_EMAIL_ADDR 0
 #define EEPROM_USER_PASSWORD_ADDR 100
 #define EEPROM_SIZE 200
-#define API_KEY "ADD YOUR API KEY"
-#define DATABASE_URL "ADD YOUR DATABASE URL"
+#define API_KEY "API KEY"
+#define DATABASE_URL "DATABASE URL"
 #define SENSITIVITY 500.0f
 #define MAX_DATA_POINTS 5 // Number of data points to store
 #define LED_PIN 22
@@ -168,7 +168,7 @@ void setup() {
   WiFi.mode(WIFI_STA);
   Serial.begin(115200);
   voltageSensor.setSensitivity(SENSITIVITY);
-  emon2.current(34, 0.9);
+  emon2.current(34,4.75);
   Serial.println("\nStarting");
   pinMode(TRIGGER_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
