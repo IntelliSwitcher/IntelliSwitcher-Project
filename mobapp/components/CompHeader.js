@@ -4,7 +4,7 @@ import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 const Header = () => {
   return (
     <View style={styles.header}>
-      <Text style={styles.title}>IntelliSwitch</Text>
+      <Text style={styles.title}>IntelliSwitcher</Text>
     </View>
   );
 };
