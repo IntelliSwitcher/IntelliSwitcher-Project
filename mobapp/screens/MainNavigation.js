@@ -2,6 +2,7 @@ import React from "react";
 import HomeScreen from "../screens/HomeScreen";
 import StartupScreen from "../screens/StartupScreen";
 import SignupScreen from "./SignupScreen";
+import MoreinfoScreen from "./MoreinfoScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const MainNavigation = () => {
@@ -12,9 +13,10 @@ const MainNavigation = () => {
       screenOptions={{ headerShown: false }}
       initialRouteName="startup"
     >
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="home" component={HomeScreen} />
       <Stack.Screen name="startup" component={StartupScreen} />
       <Stack.Screen name="signup" component={SignupScreen} />
+      <Stack.Screen name="moreinfo" component={MoreinfoScreen} />
     </Stack.Navigator>
   );
 };

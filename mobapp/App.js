@@ -3,6 +3,9 @@ import { SafeAreaView, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import MainNavigation from "./screens/MainNavigation";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://10.30.4.115:3011";
 
 const App = () => {
   const [fontsLoaded] = useFonts({

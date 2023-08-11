@@ -10,13 +10,29 @@ import {
   StyleSheet,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import axios from "axios";
 
-const SignupScreen = () => {
+const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
 
-  const signUp = () => {};
+  const signUp = () => {
+    // if (password === rePassword) {
+    //   axios
+    //     .post("/signup", {
+    //       email: email,
+    //       password: password,
+    //     })
+    //     .then((res) => {
+    //       navigation.navigate("home");
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // }
+    navigation.navigate("moreinfo");
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
