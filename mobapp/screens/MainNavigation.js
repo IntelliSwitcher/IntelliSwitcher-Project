@@ -3,6 +3,7 @@ import HomeScreen from "../screens/HomeScreen";
 import StartupScreen from "../screens/StartupScreen";
 import SignupScreen from "./SignupScreen";
 import MoreinfoScreen from "./MoreinfoScreen";
+import CategoryScreen from "./CategoryScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const MainNavigation = () => {
@@ -17,6 +18,7 @@ const MainNavigation = () => {
       <Stack.Screen name="startup" component={StartupScreen} />
       <Stack.Screen name="signup" component={SignupScreen} />
       <Stack.Screen name="moreinfo" component={MoreinfoScreen} />
+      <Stack.Screen name="category" component={CategoryScreen} />
     </Stack.Navigator>
   );
 };

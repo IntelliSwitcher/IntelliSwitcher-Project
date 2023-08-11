@@ -6,6 +6,7 @@ import MainNavigation from "./screens/MainNavigation";
 import axios from "axios";
 
 axios.defaults.baseURL = "http://10.30.4.115:3011";
+axios.defaults.headers.post["Content-Type"] = "application/json";
 
 const App = () => {
   const [fontsLoaded] = useFonts({

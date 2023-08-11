@@ -8,48 +8,43 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { useFocusEffect } from "@react-navigation/native";
-import { BackHandler } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
-const MoreinfoScreen = ({ navigation }) => {
+const CategoryScreen = ({ navigation }) => {
   const [place, setPlace] = useState("home");
-  const [weekCount, setWeekCount] = useState("");
-  const [weekendCount, setWeekendCount] = useState("");
+  const [continues, setContinues] = useState("");
+  const [standby, setstandby] = useState("");
+  const [cold, setCold] = useState("");
+  const [active, setActive] = useState("");
 
   const submit = async () => {
     try {
-      await AsyncStorage.setItem(
-        "@more",
-        JSON.stringify({
-          premises: place,
-          weekdaysPeople: weekCount,
-          weekendsPeople: weekendCount,
+      let more = JSON.parse(await AsyncStorage.getItem("@more"));
+      const applianceCounts = {
+        continuous: continues,
+        standby: standby,
+        cold: cold,
+        active: active,
+      };
+      more = { ...more, applianceCounts };
+      console.log(axios.defaults.headers);
+
+      axios
+        .post("/basicInfo/submit", {
+          more,
         })
-      );
-      console.log("Data stored successfully");
-      navigation.navigate("category");
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
+      //   navigation.navigate("");
     } catch (error) {
       console.error("Error storing data:", error);
     }
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        // Do nothing or show an alert to inform the user
-        return true; // Prevent default behavior (going back)
-      };
-
-      // Add the event listener for the hardware back button
-      BackHandler.addEventListener("hardwareBackPress", onBackPress);
-
-      // Remove the event listener when the screen is unfocused or unmounted
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [])
-  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -71,40 +66,51 @@ const MoreinfoScreen = ({ navigation }) => {
             width: "93%",
           }}
         >
-          More about your usage
+          More about your appliances
         </Text>
         <View style={{ paddingVertical: 20, width: "85%" }}>
-          <Text style={styles.label}>Monitored premises</Text>
-          <View style={[styles.input, { paddingHorizontal: 0 }]}>
-            <Picker
-              selectedValue={place}
-              onValueChange={(itemValue, itemIndex) => setPlace(itemValue)}
-              style={styles.input}
-            >
-              <Picker.Item label="Home" value="home" />
-              <Picker.Item label="Company" value="company" />
-              <Picker.Item label="Industrial" value="industrial" />
-              <Picker.Item label="Other" value="other" />
-            </Picker>
-          </View>
+          <Text style={[styles.label, { fontSize: 20 }]}>
+            how many electrical aplliances of following catergories you have
+          </Text>
           <Text style={styles.label}>
-            How many people resides/works on avarage in weekdays
+            Continuous (router,survalance camera)
           </Text>
           <TextInput
             style={styles.input}
-            value={weekCount}
-            onChangeText={setWeekCount}
+            value={continues}
+            onChangeText={setContinues}
             keyboardType="numeric"
             placeholder="Enter the count"
             placeholderTextColor="#ccc"
           />
           <Text style={styles.label}>
-            How many people resides/works on avarage in weekends
+            Standby (TV, Radio, Speaker, Laptop, PC)
           </Text>
           <TextInput
             style={styles.input}
-            value={weekendCount}
-            onChangeText={setWeekendCount}
+            value={standby}
+            onChangeText={setstandby}
+            keyboardType="numeric"
+            placeholder="Enter the count"
+            placeholderTextColor="#ccc"
+          />
+          <Text style={styles.label}>Cold (Fridges, Freezers)</Text>
+          <TextInput
+            style={styles.input}
+            value={cold}
+            onChangeText={setCold}
+            keyboardType="numeric"
+            placeholder="Enter the count"
+            placeholderTextColor="#ccc"
+          />
+          <Text style={styles.label}>
+            Active (kettles,heaters,hot-water shower,
+            Lightnening-CFL,Lightnening_LED)
+          </Text>
+          <TextInput
+            style={styles.input}
+            value={active}
+            onChangeText={setActive}
             keyboardType="numeric"
             placeholder="Enter the count"
             placeholderTextColor="#ccc"
@@ -148,4 +154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MoreinfoScreen;
+export default CategoryScreen;

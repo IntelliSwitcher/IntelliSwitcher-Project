@@ -9,7 +9,6 @@ import {
   TextInput,
   StyleSheet,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 
 const SignupScreen = ({ navigation }) => {
@@ -18,20 +17,23 @@ const SignupScreen = ({ navigation }) => {
   const [rePassword, setRePassword] = useState("");
 
   const signUp = () => {
-    // if (password === rePassword) {
-    //   axios
-    //     .post("/signup", {
-    //       email: email,
-    //       password: password,
-    //     })
-    //     .then((res) => {
-    //       navigation.navigate("home");
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // }
-    navigation.navigate("moreinfo");
+    if (password === rePassword) {
+      axios
+        .post("/signup", {
+          email: email,
+          password: password,
+        })
+        .then((res) => {
+          console.log(res.data.user.stsTokenManager.accessToken);
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `${res.data.user.stsTokenManager.accessToken}`;
+          navigation.navigate("moreinfo");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (
@@ -113,16 +115,17 @@ const styles = StyleSheet.create({
   label: {
     color: "#fff",
     paddingBottom: 5,
-    fontSize: 17,
+    fontSize: 15,
   },
   input: {
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 10,
+    borderBottomColor: "gray",
+    borderBottomWidth: 1,
+    marginBottom: 40,
     paddingHorizontal: 10,
     width: 300,
     color: "#fff",
+    fontSize: 18,
   },
 });
 
