@@ -15,7 +15,7 @@
     
     const db = firebaseAdmin.database();
     
-    const csvFilePath = path.join('./backend', 'csv');
+    const csvFilePath = path.join('./backend/routes/newcsv', 'csv');
     
     // Create CSV header
     const csvHeader = 'current,phase,voltage,timestamp\n';

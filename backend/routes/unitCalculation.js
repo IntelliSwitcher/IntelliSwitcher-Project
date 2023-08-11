@@ -13,6 +13,7 @@ const rows = rawData.trim().split('\n').slice(1); // Exclude the header row
 let totalConsumption = 0;
 let totalUnits = 0;
 let totalCharge = 0;
+let startTime = null;
 
 // Create a new CSV header for the calculated data
 const calculatedCsvHeader = `'consumption (kW)','Units','Total Charge(Rs.)',timestamp\n`;
@@ -25,9 +26,16 @@ const calculatedRows = rows.map(row => {
     math.multiply(current, voltage, math.cos(math.unit(phase, 'deg'))),
     1 / 1000
   );
-  totalConsumption += consumption;
 
-  totalUnits += consumption;
+  if (!startTime) {
+    startTime = moment(timestamp, 'YYYY-MM-DD HH:mm:ss');
+  }
+  
+  const currentTime = moment(timestamp, 'YYYY-MM-DD HH:mm:ss');
+  const timestampDiffHours = currentTime.diff(startTime, 'hours', true);
+  
+  totalConsumption += consumption;
+  totalUnits = totalConsumption * (1 / 3600) * timestampDiffHours;
 
   // Calculate total charge based on consumption and predefined ranges
   let energyCharge = 0;
