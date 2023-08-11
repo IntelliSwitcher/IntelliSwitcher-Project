@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,34 @@ import {
 import Header from "../components/CompHeader";
 import DonutChart from "../components/CompDonutChart";
 import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import axios from "axios";
 
 const HomeScreen = () => {
+  const [temp, setTemp] = useState(null); // Initial value is null
+  const [hum, setHum] = useState(null); // Initial value is null
+
+  // useEffect hook to fetch data from the API
+  useEffect(() => {
+    // Replace with your API URL
+    axios
+      .get(
+        "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,relativehumidity_2m"
+      )
+      .then((res) => {
+        const index = res.data.hourly.time.findIndex(
+          (item) =>
+            item === new Date().toISOString().split(".")[0].slice(0, 14) + "00"
+        );
+        const humidity = res.data.hourly.relativehumidity_2m[index];
+        const temp = res.data.hourly.temperature_2m[index];
+        setTemp(temp);
+        setHum(humidity);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
+
   return (
     <SafeAreaView style={{ backgroundColor: "#35155D" }}>
       <Header />
@@ -20,15 +46,64 @@ const HomeScreen = () => {
         <View style={styles.welcome}>
           <Text style={styles.greeting}>Good Morning</Text>
           <Text style={styles.name}>Kavishka</Text>
-          <View style={[styles.currPowUsage, { backgroundColor: "#95F3A1" }]}>
-            <Text style={{ color: "#333", fontWeight: 600 }}>Live Usage</Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={[{ fontSize: 40 }, { color: "#029432" }]}>100</Text>
-              <Text
-                style={[{ fontSize: 20, marginTop: 15 }, { color: "#029432" }]}
+          <View style={{ flexDirection: "row" }}>
+            <View style={[styles.currPowUsage, { backgroundColor: "#95F3A1" }]}>
+              <Text style={{ color: "#333", fontWeight: 600 }}>Live Usage</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={[{ fontSize: 40 }, { color: "#029432" }]}>
+                  100
+                </Text>
+                <Text
+                  style={[
+                    { fontSize: 20, marginTop: 15 },
+                    { color: "#029432" },
+                  ]}
+                >
+                  W
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                width: "50%",
+                padding: 30,
+                flexDirection: "column",
+                alignItems: "flex-start",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginBottom: 20,
+                }}
               >
-                W
-              </Text>
+                <FontAwesome5 name="temperature-low" size={24} color="#fcc" />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginLeft: 10,
+                    fontWeight: 500,
+                    color: "#fff",
+                  }}
+                >
+                  {temp} C
+                </Text>
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Entypo name="water" size={24} color="#ccf" />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginLeft: 10,
+                    fontWeight: 500,
+                    color: "#fff",
+                  }}
+                >
+                  {hum}%
+                </Text>
+              </View>
             </View>
           </View>
         </View>
