@@ -11,27 +11,24 @@ import {
 } from "react-native";
 import axios from "axios";
 
-const SignupScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rePassword, setRePassword] = useState("");
 
-  const signUp = () => {
-    if (password === rePassword) {
-      axios
-        .post("/signup", {
-          email: email,
-          password: password,
-        })
-        .then((res) => {
-          console.log(res.data.token);
-          axios.defaults.headers.common["Authorization"] = `${res.data.token}`;
-          navigation.navigate("moreinfo");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+  const login = () => {
+    axios
+      .post("/login", {
+        email: email,
+        password: password,
+      })
+      .then((res) => {
+        console.log(res.data.token);
+        axios.defaults.headers.common["Authorization"] = `${res.data.token}`;
+        navigation.navigate("home");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -79,16 +76,6 @@ const SignupScreen = ({ navigation }) => {
             placeholder="Enter your password"
             placeholderTextColor="#ccc"
           />
-
-          <Text style={styles.label}>Re-enter Password:</Text>
-          <TextInput
-            style={styles.input}
-            value={rePassword}
-            onChangeText={setRePassword}
-            secureTextEntry
-            placeholder="Re-enter your password"
-            placeholderTextColor="#ccc"
-          />
         </View>
         <TouchableOpacity
           style={{
@@ -100,11 +87,9 @@ const SignupScreen = ({ navigation }) => {
             justifyContent: "center",
             width: 200,
           }}
-          onPress={signUp}
+          onPress={login}
         >
-          <Text style={{ fontSize: 18, fontWeight: "500" }}>
-            Create Account
-          </Text>
+          <Text style={{ fontSize: 18, fontWeight: "500" }}>Login</Text>
         </TouchableOpacity>
         <Text style={{ fontSize: 12, marginVertical: 15, color: "#aaa" }}>
           OR
@@ -120,7 +105,7 @@ const SignupScreen = ({ navigation }) => {
             width: 200,
           }}
           onPress={() => {
-            navigation.navigate("login");
+            navigation.navigate("signup");
           }}
         >
           <Text
@@ -130,7 +115,7 @@ const SignupScreen = ({ navigation }) => {
               color: "#eee",
             }}
           >
-            Login
+            Sign up
           </Text>
         </TouchableOpacity>
       </View>
@@ -156,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignupScreen;
+export default LoginScreen;
