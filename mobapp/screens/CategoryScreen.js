@@ -12,7 +12,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const CategoryScreen = ({ navigation }) => {
-  const [place, setPlace] = useState("home");
   const [continues, setContinues] = useState("");
   const [standby, setstandby] = useState("");
   const [cold, setCold] = useState("");
@@ -28,7 +27,6 @@ const CategoryScreen = ({ navigation }) => {
         active: active,
       };
       more = { ...more, applianceCounts };
-      console.log(axios.defaults.headers);
 
       axios
         .post("/basicInfo/submit", {
@@ -36,6 +34,7 @@ const CategoryScreen = ({ navigation }) => {
         })
         .then((res) => {
           console.log(res.data);
+          navigation.navigate("steps");
         })
         .catch((err) => {
           console.log(err.response.data);

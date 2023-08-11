@@ -4,8 +4,6 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const firebase = require("./routes/firebase");
-const firebaseAdmin = require("./routes/firebaseAdmin");
 const verifyTokenMiddleware = require("./routes/verifyTokenMiddleware");
 
 // Middleware

@@ -24,10 +24,8 @@ const SignupScreen = ({ navigation }) => {
           password: password,
         })
         .then((res) => {
-          console.log(res.data.user.stsTokenManager.accessToken);
-          axios.defaults.headers.common[
-            "Authorization"
-          ] = `${res.data.user.stsTokenManager.accessToken}`;
+          console.log(res.data.token);
+          axios.defaults.headers.common["Authorization"] = `${res.data.token}`;
           navigation.navigate("moreinfo");
         })
         .catch((err) => {

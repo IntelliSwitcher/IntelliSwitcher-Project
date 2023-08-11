@@ -23,7 +23,6 @@ const MoreinfoScreen = ({ navigation }) => {
       await AsyncStorage.setItem(
         "@more",
         JSON.stringify({
-          premises: place,
           weekdaysPeople: weekCount,
           weekendsPeople: weekendCount,
         })
@@ -74,19 +73,6 @@ const MoreinfoScreen = ({ navigation }) => {
           More about your usage
         </Text>
         <View style={{ paddingVertical: 20, width: "85%" }}>
-          <Text style={styles.label}>Monitored premises</Text>
-          <View style={[styles.input, { paddingHorizontal: 0 }]}>
-            <Picker
-              selectedValue={place}
-              onValueChange={(itemValue, itemIndex) => setPlace(itemValue)}
-              style={styles.input}
-            >
-              <Picker.Item label="Home" value="home" />
-              <Picker.Item label="Company" value="company" />
-              <Picker.Item label="Industrial" value="industrial" />
-              <Picker.Item label="Other" value="other" />
-            </Picker>
-          </View>
           <Text style={styles.label}>
             How many people resides/works on avarage in weekdays
           </Text>
