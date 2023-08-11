@@ -1,16 +1,24 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  Dimensions,
+} from "react-native";
 import Header from "../components/CompHeader";
+import DonutChart from "../components/CompDonutChart";
 
 const HomeScreen = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: "#35155D" }}>
       <Header />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.welcome}>
           <Text style={styles.greeting}>Good Morning</Text>
           <Text style={styles.name}>Kavishka</Text>
-          <View style={[styles.currPowUsage, { backgroundColor: "#95F3A133" }]}>
+          <View style={[styles.currPowUsage, { backgroundColor: "#95F3A1" }]}>
             <Text style={{ color: "#333", fontWeight: 600 }}>Live Usage</Text>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={[{ fontSize: 40 }, { color: "#029432" }]}>100</Text>
@@ -27,7 +35,7 @@ const HomeScreen = () => {
             styles.welcome,
             {
               marginTop: 20,
-              backgroundColor: "#8CABFF",
+              backgroundColor: "transparent",
               alignItems: "flex-start",
             },
           ]}
@@ -36,59 +44,84 @@ const HomeScreen = () => {
             This Month
           </Text>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <View
-              style={[styles.welcome, { flex: 1, alignItems: "flex-start" }]}
-            >
-              <Text style={{ fontSize: 22 }}>55 kWh</Text>
-              <Text style={{ fontSize: 12 }}>Power usage</Text>
+            <View style={{ flex: 1, height: 150 }}>
+              <DonutChart
+                usage={100}
+                usageIn={50}
+                usageColor={"#8CABFF"}
+                usageInColor={"#4477CE"}
+                size={200}
+              >
+                <Text style={{ fontSize: 22, color: "#fff" }}>55 kWh</Text>
+                <Text
+                  style={{ fontSize: 12, color: "#ccc", textAlign: "center" }}
+                >
+                  Power usage
+                </Text>
+              </DonutChart>
             </View>
-            <View
-              style={[styles.welcome, { flex: 1, alignItems: "flex-start" }]}
-            >
-              <Text style={{ fontSize: 22 }}>Rs:750.00</Text>
-              <Text style={{ fontSize: 12 }}>Price</Text>
-            </View>
-          </View>
-          <View style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
-            <View
-              style={[styles.welcome, { flex: 1, alignItems: "flex-start" }]}
-            >
-              <Text style={{ fontSize: 22 }}>100 kWh</Text>
-              <Text style={{ fontSize: 12 }}>Power usage limit</Text>
-            </View>
-            <View
-              style={[styles.welcome, { flex: 1, alignItems: "flex-start" }]}
-            >
-              <Text style={{ fontSize: 22 }}>Rs:12250.00</Text>
-              <Text style={{ fontSize: 12 }}>Max Price</Text>
+            <View style={{ flex: 1, height: 150 }}>
+              <DonutChart
+                usage={100}
+                usageIn={50}
+                usageColor={"#8CABFF"}
+                usageInColor={"#4477CE"}
+                size={160}
+              >
+                <Text style={{ fontSize: 15, color: "#fff" }}>Rs.456.00</Text>
+                <Text
+                  style={{ fontSize: 11, color: "#ccc", textAlign: "center" }}
+                >
+                  Price
+                </Text>
+              </DonutChart>
             </View>
           </View>
         </View>
-      </View>
+        <View
+          style={[
+            styles.welcome,
+            {
+              marginTop: 20,
+              backgroundColor: "transparent",
+              alignItems: "flex-start",
+            },
+          ]}
+        >
+          <Text style={{ color: "#fff", fontSize: 30, marginBottom: 30 }}>
+            Next Month
+          </Text>
+          <View style={{ flexDirection: "row", gap: 10 }}></View>
+        </View>
+        <View style={{ height: 100 }}></View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
+const { height } = Dimensions.get("window");
+
 const styles = StyleSheet.create({
   container: {
+    height: height,
     paddingHorizontal: 15,
     paddingVertical: 15,
   },
   welcome: {
     borderRadius: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff33",
     padding: 16,
     flexDirection: "column",
     alignItems: "center",
   },
   greeting: {
-    color: "#35155D",
+    color: "#fff",
     fontSize: 32,
     fontWeight: "500",
     alignSelf: "flex-start",
   },
   name: {
-    color: "#35155D",
+    color: "#ddd",
     fontSize: 23,
     fontWeight: "300",
     alignSelf: "flex-start",
