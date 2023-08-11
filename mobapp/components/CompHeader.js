@@ -14,10 +14,12 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 10,
     paddingHorizontal: 15,
+    backgroundColor: "#35155D",
   },
   title: {
     fontFamily: "Raleway-SemiBold",
     fontSize: 24,
+    color: "#fff",
   },
 });
 

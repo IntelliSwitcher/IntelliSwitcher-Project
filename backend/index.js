@@ -1,35 +1,32 @@
+//////////////////////////// index.js 
+                          // main js file contains all the routes
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const firebase = require('./routes/firebase'); 
+const verifyTokenMiddleware = require('./routes/verifyTokenMiddleware');
 
 // Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Firebase configuration and initialization
-// You need to replace the placeholders with your actual Firebase credentials
-const firebase = require('firebase');
-const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
-  databaseURL: 'YOUR_DATABASE_URL',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID'
-};
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+// Use the Firebase Admin app instance in your routes
+const dashboardHelloRoute = require('./routes/dashboardHello');
+const signupRoute = require('./routes/signup');
+const loginRoute = require('./routes/login');
+const basicInfoRoute = require('./routes/basicInfo');
+// const predictRoute = require('./routes/predict');
 
-// Routes
-const signupRoute = require('./signup');
-const dashboardRoute = require('./dashboard');
-
+// Use the routes
+app.use('/dashboardHello', verifyTokenMiddleware, dashboardHelloRoute);
 app.use('/signup', signupRoute);
-app.use('/dashboard', dashboardRoute);
+app.use('/login', loginRoute);
+app.use('/basicInfo', basicInfoRoute);
+// app.use('predict',predictRoute);
+
 
 // Start the server
-const PORT = 3010;
+const PORT = process.env.PORT || 3011;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
