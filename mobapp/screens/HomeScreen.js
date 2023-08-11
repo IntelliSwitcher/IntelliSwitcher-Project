@@ -6,9 +6,11 @@ import {
   ScrollView,
   SafeAreaView,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import Header from "../components/CompHeader";
 import DonutChart from "../components/CompDonutChart";
+import { AntDesign } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   return (
@@ -43,7 +45,7 @@ const HomeScreen = () => {
           <Text style={{ color: "#fff", fontSize: 30, marginBottom: 30 }}>
             This Month
           </Text>
-          <View style={{ flexDirection: "row", gap: 10 }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
             <View style={{ flex: 1, height: 150 }}>
               <DonutChart
                 usage={100}
@@ -76,6 +78,24 @@ const HomeScreen = () => {
                 </Text>
               </DonutChart>
             </View>
+            <TouchableOpacity
+              style={{
+                width: "100%",
+                paddingVertical: 10,
+                paddingHorizontal: 30,
+                borderRadius: 20,
+                backgroundColor: "#FCD308",
+                flexDirection: "row",
+                marginTop: 30,
+              }}
+            >
+              <Text
+                style={{ fontSize: 18, fontWeight: "500", marginRight: "auto" }}
+              >
+                Edit goal
+              </Text>
+              <AntDesign name="rightcircleo" size={24} color="black" />
+            </TouchableOpacity>
           </View>
         </View>
         <View
@@ -88,10 +108,49 @@ const HomeScreen = () => {
             },
           ]}
         >
-          <Text style={{ color: "#fff", fontSize: 30, marginBottom: 30 }}>
+          <Text style={{ color: "#fff", fontSize: 30, marginBottom: 20 }}>
             Next Month
           </Text>
-          <View style={{ flexDirection: "row", gap: 10 }}></View>
+          <View
+            style={{
+              backgroundColor: "#ffffff33",
+              width: "100%",
+              padding: 20,
+              paddingVertical: 35,
+              borderRadius: 10,
+            }}
+          >
+            <View style={{ flexDirection: "row", marginBottom: 20 }}>
+              <Text style={{ color: "#fff", fontSize: 15 }}>
+                Power usage (predicted)
+              </Text>
+              <Text
+                style={{
+                  marginLeft: "auto",
+                  fontSize: 17,
+                  color: "#FCD308",
+                  fontWeight: 600,
+                }}
+              >
+                70kWh
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <Text style={{ color: "#fff", fontSize: 15 }}>
+                Price (predicted)
+              </Text>
+              <Text
+                style={{
+                  marginLeft: "auto",
+                  fontSize: 17,
+                  color: "#FCD308",
+                  fontWeight: 600,
+                }}
+              >
+                Rs.12,520.00
+              </Text>
+            </View>
+          </View>
         </View>
         <View style={{ height: 100 }}></View>
       </ScrollView>
