@@ -49,22 +49,49 @@
 //     }
 //   });
 
-/// Listen for changes in the database
-db.ref('Sensor').on('child_changed', (snapshot) => {
-    try {
-      const data = snapshot.val();
+// /// Listen for changes in the database
+// db.ref('Sensor').on('child_changed', (snapshot) => {
+//     try {
+//       const data = snapshot.val();
       
-      const current = data.Amp ? data.Amp.map(value => value.toString()).join(',') : 'null';
-      const phase = data.Phase ? data.Phase.map(value => value.toString()).join(',') : 'null';
-      const voltage = data.Voltage ? data.Voltage.map(value => value.toString()).join(',') : 'null';
+//       const current = data.Amp ? data.Amp.map(value => value.toString()).join(',') : 'null';
+//       const phase = data.Phase ? data.Phase.map(value => value.toString()).join(',') : 'null';
+//       const voltage = data.Voltage ? data.Voltage.map(value => value.toString()).join(',') : 'null';
   
-      const csvRow = `${current},${phase},${voltage},${moment().format('YYYY-MM-DD HH:mm:ss')}\n`;
+//       const csvRow = `${current},${phase},${voltage},${moment().format('YYYY-MM-DD HH:mm:ss')}\n`;
+//       fs.appendFileSync(path.join(csvFilePath, 'data.csv'), csvRow);
+//       console.log('Data logged successfully:', csvRow);
+//     } catch (error) {
+//       console.error('Error logging data:', error);
+//     }
+//   });
+
+
+// Listen for changes in the database
+db.ref('Sensor').on('value', (snapshot) => {
+  try {
+    const data = snapshot.val();
+    console.log(data);
+    
+    const current = data.Amp ? data.Amp.map(value => value.toString()) : ['null'];
+    const phase = data.Phase ? data.Phase.map(value => value.toString()) : ['null'];
+    const voltage = data.Voltage ? data.Voltage.map(value => value.toString()) : ['null'];
+
+    const timestamp = moment().format('YYYY-MM-DD HH:mm:ss');
+    
+    for (let i = 0; i < Math.max(current.length, phase.length, voltage.length); i++) {
+      const csvRow = `${getValue(current, i)},${getValue(phase, i)},${getValue(voltage, i)},${timestamp}\n`;
       fs.appendFileSync(path.join(csvFilePath, 'data.csv'), csvRow);
       console.log('Data logged successfully:', csvRow);
-    } catch (error) {
-      console.error('Error logging data:', error);
     }
-  });
+  } catch (error) {
+    console.error('Error logging data:', error);
+  }
+});
+
   
     console.log('Data logging started...');
     
+    function getValue(array, index) {
+      return index < array.length ? array[index] : 'null';
+    }

@@ -13,7 +13,7 @@ router.get('/', verifyTokenMiddleware, async (req, res) => {
     const user = req.user;
 
     // Path to the predicted data CSV file
-    const filePath = path.join(__dirname, '..', 'csv', `predict_${user.uid}.csv`);
+    const filePath = path.join('./backend', '..', 'csv', `predict_${user.uid}.csv`);
 
     // Read the CSV file and parse its content
     const predictedData = [];

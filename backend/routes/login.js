@@ -1,14 +1,30 @@
-////////////////// login.js
+// login.js
 const express = require('express');
 const router = express.Router();
-const firebaseAdmin = require('firebase-admin');
+const firebase = require('./firebase');
 
-// Google Login route
-router.get('/google', (req, res) => {
-  const provider = new firebaseAdmin.auth.GoogleAuthProvider();
+const login = async (email, password) => {
+  const auth = firebase.auth();
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    console.log('User logged in:', userCredential.user.getIdToken());
+  } catch (error) {
+    console.error('Error during login:', error.message);
+  }
+};
 
-  // Redirect the user to Google's sign-in page
-  res.redirect(provider.buildUrl().toString());
+// Route to handle user login
+router.post('/', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  login(email, password)
+    .then(() => {
+      res.json({ message: 'Login successful',  });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: 'An error occurred during login' });
+    });
 });
 
 module.exports = router;

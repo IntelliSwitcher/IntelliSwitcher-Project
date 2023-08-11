@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const firebase = require('./firebase');
 
-router.post('/signup', async (req, res) => {
+router.post('/', async (req, res) => {
   const { email, password } = req.body;
 
   // Use the firebase app instance for authentication
