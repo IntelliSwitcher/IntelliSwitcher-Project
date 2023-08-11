@@ -1,0 +1,4 @@
+/node_modules
+/serviceAccountKey.json
+/routes/firebase.js
+/routes/firebaseAdmin.js

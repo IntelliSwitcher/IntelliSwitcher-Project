@@ -1,7 +1,6 @@
 /////////////////////////////// verifyTokenMiddleware.js  : middleware to operate firebase-admin
 
-const firebaseAdmin = require('firebase-admin');
-const firebase = require('./firebase'); 
+const firebaseAdmin = require("./firebaseAdmin");
 
 const verifyTokenMiddleware = async (req, res, next) => {
   const token = req.headers.authorization;
@@ -12,10 +11,9 @@ const verifyTokenMiddleware = async (req, res, next) => {
     req.user = decodedToken;
     next();
   } catch (error) {
-    console.log(error)
-    res.status(401).json({ message: 'Unauthorized' });
+    console.log(error);
+    res.status(401).json({ message: "Unauthorized" });
   }
 };
 
 module.exports = verifyTokenMiddleware;
-
