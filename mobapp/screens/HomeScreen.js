@@ -102,7 +102,7 @@ const HomeScreen = () => {
           style={[
             styles.welcome,
             {
-              marginTop: 20,
+              marginTop: 0,
               backgroundColor: "transparent",
               alignItems: "flex-start",
             },
