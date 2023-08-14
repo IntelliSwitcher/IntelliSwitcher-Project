@@ -2,7 +2,6 @@
 <p align="center">Intelligent Domestic Energy Optimizing System</p>
 
 
-# IntelliSwitcher: Intelligent Domestic Energy Optimizing System
 
 IntelliSwitcher is a cutting-edge IoT device and mobile app system designed to empower households to effortlessly reduce energy consumption and contribute to a sustainable future. By seamlessly connecting to any electric switch, this innovative technology continuously monitors power factors, voltage, and current consumption, providing real-time data through an intuitive mobile app interface.
 
